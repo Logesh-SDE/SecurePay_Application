@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}View Transactions - SecurePay Admin{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <nav class="admin-navbar">
+        <div class="nav-brand">SecurePay Admin</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-back">← Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h1 class="page-title">Transaction Log</h1>
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Transaction ID</th>
+                        <th>Type</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date/Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr>
+                        <td><code>{{ txn.transaction_id }}</code></td>
+                        <td><span class="type-badge">{{ txn.transaction_type }}</span></td>
+                        <td>{{ txn.sender_name or 'N/A' }}</td>
+                        <td>{{ txn.receiver_name or txn.merchant_name or 'N/A' }}</td>
+                        <td class="amount">₹{{ "%.2f"|format(txn.amount) }}</td>
+                        <td>
+                            {% if txn.status == 'completed' %}
+                            <span class="status-badge success">{{ txn.status }}</span>
+                            {% elif txn.status == 'pending' %}
+                            <span class="status-badge warning">{{ txn.status }}</span>
+                            {% else %}
+                            <span class="status-badge error">{{ txn.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ txn.created_at }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="no-data">No transactions found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}View Users - SecurePay Admin{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+    <nav class="admin-navbar">
+        <div class="nav-brand">SecurePay Admin</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn-back">← Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="page-header">
+            <h1 class="page-title">Registered Users</h1>
+            <a href="{{ url_for('create_account') }}" class="btn-add">+ Add User</a>
+        </div>
+        
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Mobile</th>
+                        <th>UPI ID</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>#{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.mobile }}</td>
+                        <td>{{ user.upi_id }}</td>
+                        <td>₹{{ "%.2f"|format(user.balance) }}</td>
+                        <td>
+                            {% if user.is_active %}
+                            <span class="status-badge active">Active</span>
+                            {% else %}
+                            <span class="status-badge inactive">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at[:10] }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete user {{ user.name }}? This will also delete all their transactions.');">
+                                <button type="submit" class="btn-delete">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                    </svg>
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="no-data">No users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

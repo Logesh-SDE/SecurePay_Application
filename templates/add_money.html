@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}Add Money - SecurePay{% endblock %}
+
+{% block content %}
+<div class="user-dashboard">
+    <nav class="user-navbar">
+        <div class="nav-brand">SecurePay</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn-back">← Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div class="payment-card">
+            <div class="card-header">
+                <h2>💰 Add Money to Wallet</h2>
+                <p>Add funds to your SecurePay wallet instantly</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('add_money') }}" class="payment-form">
+                <div class="form-group">
+                    <label for="amount">Enter Amount (₹)</label>
+                    <div class="amount-input-wrapper">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" 
+                               id="amount" 
+                               name="amount" 
+                               placeholder="0.00" 
+                               step="0.01" 
+                               min="1"
+                               required>
+                    </div>
+                </div>
+
+                <div class="quick-amounts">
+                    <p>Quick Add:</p>
+                    <div class="amount-buttons">
+                        <button type="button" class="amount-btn" onclick="setAmount(100)">₹100</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(500)">₹500</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(1000)">₹1000</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(5000)">₹5000</button>
+                    </div>
+                </div>
+
+                <div class="payment-methods">
+                    <p>Payment Method:</p>
+                    <div class="method-options">
+                        <label class="method-option selected">
+                            <input type="radio" name="method" value="upi" checked>
+                            <div class="method-card">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="#5B4DFF">
+                                    <rect x="8" y="12" width="24" height="16" rx="2"/>
+                                    <path d="M 10 20 L 30 20" stroke="white" stroke-width="2"/>
+                                </svg>
+                                <span>UPI / Bank</span>
+                            </div>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="method" value="card">
+                            <div class="method-card">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="#43e97b">
+                                    <rect x="6" y="10" width="28" height="20" rx="3"/>
+                                    <rect x="6" y="15" width="28" height="4" fill="white"/>
+                                    <rect x="10" y="22" width="12" height="6" rx="1" fill="white"/>
+                                </svg>
+                                <span>Debit/Credit Card</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="#4CAF50">
+                        <circle cx="10" cy="10" r="9" stroke="#4CAF50" stroke-width="2" fill="none"/>
+                        <path d="M 6 10 L 9 13 L 14 7" stroke="#4CAF50" stroke-width="2" fill="none"/>
+                    </svg>
+                    <div>
+                        <strong>Instant & Secure</strong>
+                        <p>Money will be added to your wallet instantly</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-payment">
+                    Add Money Now
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-card {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.card-header h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.card-header p {
+    color: #666;
+    font-size: 14px;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.amount-input-wrapper input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    transition: border-color 0.3s;
+}
+
+.amount-input-wrapper input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.quick-amounts p {
+    color: #666;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.amount-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+.amount-btn {
+    padding: 12px;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.amount-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.payment-methods p {
+    color: #666;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+}
+
+.method-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.method-option {
+    cursor: pointer;
+}
+
+.method-option input {
+    display: none;
+}
+
+.method-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    transition: all 0.3s;
+}
+
+.method-option.selected .method-card,
+.method-option input:checked + .method-card {
+    background: #e8f5e9;
+    border-color: #4CAF50;
+}
+
+.method-card span {
+    font-weight: 600;
+    color: #333;
+}
+
+.info-box {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #e8f5e9;
+    border-radius: 10px;
+    border-left: 4px solid #4CAF50;
+}
+
+.info-box strong {
+    display: block;
+    color: #2e7d32;
+    margin-bottom: 0.25rem;
+}
+
+.info-box p {
+    color: #4CAF50;
+    font-size: 14px;
+    margin: 0;
+}
+
+.btn-submit-payment {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-submit-payment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+    .payment-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .amount-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .method-options {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function setAmount(value) {
+    document.getElementById('amount').value = value;
+}
+
+// Add method selection interactivity
+document.querySelectorAll('.method-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.method-option').forEach(opt => opt.classList.remove('selected'));
+        this.classList.add('selected');
+        this.querySelector('input').checked = true;
+    });
+});
+</script>
+{% endblock %}

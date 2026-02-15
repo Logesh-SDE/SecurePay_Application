@@ -1,0 +1,165 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                   SECUREPAY - QUICK START GUIDE                ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🚀 INSTALLATION & SETUP
+─────────────────────────────────────────────────────────────────
+
+1. Install Flask:
+   pip install flask
+
+2. Run the application:
+   python3 app.py
+
+3. Open your browser:
+   http://localhost:5000
+
+
+🔐 DEFAULT CREDENTIALS
+─────────────────────────────────────────────────────────────────
+
+ADMIN LOGIN:
+  Username: admin
+  Password: admin123
+
+USER LOGIN:
+  Enter any 10-digit mobile number
+  OTP will be displayed on screen (for demo)
+
+
+✨ MAIN FEATURES
+─────────────────────────────────────────────────────────────────
+
+HOMEPAGE (/)
+  • Landing page with beautiful gradient design
+  • Navigation to user login and admin login
+  • Animated payment illustrations
+
+USER PORTAL
+  • OTP-based authentication
+  • View balance and UPI ID
+  • Transaction history
+  • Quick actions (Send/Request/Scan)
+
+ADMIN CONTROL PANEL
+  • Dashboard with statistics
+  • Create new users and merchants
+  • View all users
+  • View all merchants
+  • View complete transaction log
+
+
+📁 PROJECT STRUCTURE
+─────────────────────────────────────────────────────────────────
+
+securepay_project/
+├── app.py                     # Main Flask application
+├── templates/                 # All HTML templates
+│   ├── index.html            # Homepage
+│   ├── user_login.html       # User login
+│   ├── admin_login.html      # Admin login
+│   ├── admin_dashboard.html  # Admin panel
+│   └── ...                   # Other templates
+├── static/
+│   ├── css/style.css         # Complete styling
+│   └── js/main.js            # JavaScript features
+└── securepay.db              # SQLite database (auto-created)
+
+
+🎯 TESTING THE APPLICATION
+─────────────────────────────────────────────────────────────────
+
+1. START WITH ADMIN PANEL:
+   • Login at: http://localhost:5000/admin/login
+   • Username: admin, Password: admin123
+   • Explore the 4 main sections
+
+2. CREATE TEST ACCOUNTS:
+   • Click "Create Account"
+   • Add a test user (mobile: 9876543210)
+   • Add a test merchant
+
+3. TEST USER LOGIN:
+   • Go to: http://localhost:5000/user/login
+   • Enter mobile: 9876543210
+   • Enter the OTP shown on screen
+   • View your dashboard
+
+4. VIEW ADMIN FEATURES:
+   • Check "View Users" - see your created user
+   • Check "View Merchants" - see your created merchant
+   • Check "View Transactions" - view all activity
+
+
+🎨 CUSTOMIZATION
+─────────────────────────────────────────────────────────────────
+
+CHANGE COLORS:
+  Edit: static/css/style.css
+  Modify gradient backgrounds and theme colors
+
+CHANGE ADMIN PASSWORD:
+  Edit: app.py (init_db function)
+  Update the admin password hash
+
+ADD FEATURES:
+  Edit: app.py
+  Add new routes and functionality
+
+
+🔧 TROUBLESHOOTING
+─────────────────────────────────────────────────────────────────
+
+DATABASE ISSUES:
+  Delete securepay.db and restart app.py
+
+PORT ALREADY IN USE:
+  Change port in app.py: port=5001
+
+TEMPLATES NOT FOUND:
+  Ensure templates/ directory exists with all HTML files
+
+
+📊 DATABASE TABLES
+─────────────────────────────────────────────────────────────────
+
+• users - All registered users
+• merchants - All registered merchants  
+• transactions - Complete transaction log
+• admins - Admin accounts
+• otp_verification - OTP records
+
+
+🚀 NEXT STEPS
+─────────────────────────────────────────────────────────────────
+
+1. ✅ Application is fully functional
+2. 🎨 Customize the design and colors
+3. 🔐 Integrate real SMS OTP service
+4. 💳 Add payment gateway
+5. 📱 Build mobile app version
+6. 🌐 Deploy to production server
+
+
+💡 TIPS
+─────────────────────────────────────────────────────────────────
+
+• All pages are mobile responsive
+• Flash messages auto-dismiss after 5 seconds
+• Transaction IDs are clickable to copy
+• Tables have built-in search functionality
+• Session-based authentication
+• Secure password hashing for admins
+
+
+📞 SUPPORT
+─────────────────────────────────────────────────────────────────
+
+Check README.md for detailed documentation
+Review app.py for code comments and logic
+All routes are clearly documented in the code
+
+
+═══════════════════════════════════════════════════════════════════
+            Built with Flask • Modern UI • Fully Functional
+═══════════════════════════════════════════════════════════════════

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - SecurePay{% endblock %}
+
+{% block content %}
+<div class="user-dashboard">
+    <nav class="user-navbar">
+        <div class="nav-brand">SecurePay</div>
+        <div class="nav-actions">
+            <span class="user-name">{{ user.name }}</span>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div class="balance-card">
+            <div class="balance-header">
+                <h3>Available Balance</h3>
+                <div class="upi-id">UPI: {{ user.upi_id }}</div>
+            </div>
+            <div class="balance-amount">₹{{ "%.2f"|format(user.balance) }}</div>
+        </div>
+
+        {% if insights %}
+        <div class="ai-insights-card">
+            <div class="insights-header">
+                <h3>🤖 AI Insights & Recommendations</h3>
+                <span class="insights-badge">Powered by AI</span>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-stat">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-value">₹{{ "%.0f"|format(insights.total_spent_month) }}</div>
+                    <div class="stat-label">Spent This Month</div>
+                </div>
+                <div class="insight-stat">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-value">{{ insights.transaction_count }}</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+                <div class="insight-stat">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">₹{{ "%.0f"|format(insights.avg_transaction) }}</div>
+                    <div class="stat-label">Avg Transaction</div>
+                </div>
+                <div class="insight-stat">
+                    <div class="stat-icon">{% if insights.spending_trend > 0 %}📈{% else %}📉{% endif %}</div>
+                    <div class="stat-value">{{ "%.0f"|format(insights.spending_trend|abs) }}%</div>
+                    <div class="stat-label">{% if insights.spending_trend > 0 %}↑ Increase{% else %}↓ Decrease{% endif %}</div>
+                </div>
+            </div>
+            {% if insights.recommendations %}
+            <div class="ai-recommendations">
+                <h4>💡 Smart Recommendations:</h4>
+                {% for rec in insights.recommendations %}
+                <div class="recommendation">{{ rec }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <div class="insights-footer">
+                <a href="{{ url_for('user_insights') }}" class="btn-insights">View Detailed Analytics →</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="quick-actions">
+            <a href="{{ url_for('send_money') }}" class="action-btn send">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 21l21-9L2 3v7l15 2-15 2z"/>
+                </svg>
+                Send Money
+            </a>
+            <a href="{{ url_for('request_money') }}" class="action-btn request">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 8v8M8 12h8" stroke="white" stroke-width="2"/>
+                </svg>
+                Request Money
+            </a>
+            <a href="{{ url_for('add_money') }}" class="action-btn scan">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <text x="12" y="17" text-anchor="middle" font-size="14" font-weight="bold" fill="white">₹</text>
+                </svg>
+                Add Money
+            </a>
+        </div>
+
+        <div class="transactions-section">
+            <h2>Recent Transactions</h2>
+            
+            {% if transactions %}
+            <div class="transactions-list">
+                {% for txn in transactions %}
+                <div class="transaction-item {% if txn.type == 'credit' %}credit{% else %}debit{% endif %}">
+                    <div class="txn-icon">
+                        {% if txn.type == 'credit' %}
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#4CAF50">
+                            <path d="M7 14l5-5 5 5z"/>
+                        </svg>
+                        {% else %}
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#F44336">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                        {% endif %}
+                    </div>
+                    <div class="txn-details">
+                        <div class="txn-party">{{ txn.other_party }}</div>
+                        <div class="txn-id">{{ txn.transaction_id }}</div>
+                        <div class="txn-time">{{ txn.created_at }}</div>
+                    </div>
+                    <div class="txn-amount {% if txn.type == 'credit' %}credit{% else %}debit{% endif %}">
+                        {% if txn.type == 'credit' %}+{% else %}-{% endif %}₹{{ "%.2f"|format(txn.amount) }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-transactions">
+                <p>No transactions yet</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

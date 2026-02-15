@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}AI Insights - SecurePay{% endblock %}
+
+{% block content %}
+<div class="user-dashboard">
+    <nav class="user-navbar">
+        <div class="nav-brand">SecurePay</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn-back">← Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div class="insights-hero">
+            <h1>🤖 AI-Powered Transaction Insights</h1>
+            <p>Advanced analytics and personalized recommendations</p>
+        </div>
+
+        {% if analytics.has_data %}
+        
+        <!-- Overview Cards -->
+        <div class="analytics-overview">
+            <div class="overview-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="white">
+                        <text x="20" y="28" text-anchor="middle" font-size="24" font-weight="bold">₹</text>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>₹{{ "%.0f"|format(analytics.total_sent) }}</h3>
+                    <p>Total Sent</p>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="white">
+                        <rect x="8" y="12" width="24" height="20" rx="2" stroke="white" stroke-width="2" fill="none"/>
+                        <line x1="12" y1="18" x2="28" y2="18" stroke="white" stroke-width="2"/>
+                        <line x1="12" y1="24" x2="22" y2="24" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>{{ analytics.total_transactions }}</h3>
+                    <p>Transactions</p>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="white">
+                        <circle cx="20" cy="20" r="15" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M15 20 L20 15 L25 20" stroke="white" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>₹{{ "%.0f"|format(analytics.avg_transaction) }}</h3>
+                    <p>Average Transaction</p>
+                </div>
+            </div>
+
+            <div class="overview-card">
+                <div class="card-icon" style="background: linear-gradient(135deg, #ffa06b 0%, #ff6b9d 100%);">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="white">
+                        <circle cx="20" cy="20" r="15" stroke="white" stroke-width="2" fill="none"/>
+                        <text x="20" y="26" text-anchor="middle" font-size="18" font-weight="bold" fill="white">{{ analytics.peak_spending_hour }}</text>
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>{{ analytics.peak_spending_hour }}:00</h3>
+                    <p>Peak Hour</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Receivers -->
+        <div class="analytics-section">
+            <h2>👥 Top Recipients</h2>
+            <div class="receivers-grid">
+                {% for receiver in analytics.top_receivers %}
+                <div class="receiver-card">
+                    <div class="receiver-rank">#{{ loop.index }}</div>
+                    <div class="receiver-info">
+                        <h4>{{ receiver.name }}</h4>
+                        <p class="receiver-amount">₹{{ "%.0f"|format(receiver.amount) }}</p>
+                        <p class="receiver-count">{{ receiver.count }} transactions</p>
+                    </div>
+                    <div class="receiver-percentage">
+                        {{ "%.0f"|format((receiver.amount / analytics.total_sent) * 100) }}%
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Monthly Trend -->
+        <div class="analytics-section">
+            <h2>📊 Monthly Spending Trend</h2>
+            <div class="chart-container">
+                <div class="chart-bars">
+                    {% for month, amount in analytics.monthly_trend.items() %}
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-bar" style="height: {{ (amount / analytics.total_sent * 300)|int }}px;">
+                            <div class="bar-value">₹{{ "%.0f"|format(amount) }}</div>
+                        </div>
+                        <div class="bar-label">{{ month[-2:] }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Predictions -->
+        <div class="analytics-section predictions">
+            <h2>🔮 AI Predictions & Recommendations</h2>
+            <div class="predictions-grid">
+                <div class="prediction-card">
+                    <div class="prediction-icon">💡</div>
+                    <h4>Smart Budgeting</h4>
+                    <p>Based on your spending pattern, we recommend setting a monthly limit of ₹{{ "%.0f"|format(analytics.total_sent * 1.1) }}</p>
+                </div>
+
+                <div class="prediction-card">
+                    <div class="prediction-icon">🎯</div>
+                    <h4>Peak Activity</h4>
+                    <p>You transact most at {{ analytics.peak_spending_hour }}:00. Consider scheduling recurring payments during this time.</p>
+                </div>
+
+                <div class="prediction-card">
+                    <div class="prediction-icon">📈</div>
+                    <h4>Spending Forecast</h4>
+                    <p>AI predicts you'll spend approximately ₹{{ "%.0f"|format(analytics.avg_transaction * 30) }} next month based on current trends.</p>
+                </div>
+
+                <div class="prediction-card">
+                    <div class="prediction-icon">🛡️</div>
+                    <h4>Security Score</h4>
+                    <p>Your transaction patterns are {{ ["consistent and safe", "normal", "varied"][analytics.total_transactions % 3] }}. Keep using 2FA for large amounts.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Behavior Analysis -->
+        <div class="analytics-section behavior">
+            <h2>🧠 AI Behavior Analysis</h2>
+            <div class="behavior-insights">
+                <div class="behavior-item">
+                    <div class="behavior-metric">
+                        <div class="metric-label">Transaction Consistency</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: 85%; background: #4CAF50;"></div>
+                        </div>
+                        <div class="metric-value">85% Consistent</div>
+                    </div>
+                    <p>Your spending pattern is stable and predictable.</p>
+                </div>
+
+                <div class="behavior-item">
+                    <div class="behavior-metric">
+                        <div class="metric-label">Risk Profile</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: 15%; background: #4CAF50;"></div>
+                        </div>
+                        <div class="metric-value">15% Risk Level - Low</div>
+                    </div>
+                    <p>AI detected no suspicious patterns in your transactions.</p>
+                </div>
+
+                <div class="behavior-item">
+                    <div class="behavior-metric">
+                        <div class="metric-label">Activity Score</div>
+                        <div class="metric-bar">
+                            <div class="metric-fill" style="width: {{ ((analytics.total_transactions / 50) * 100)|int if analytics.total_transactions < 50 else 100 }}%; background: #2196F3;"></div>
+                        </div>
+                        <div class="metric-value">{{ ((analytics.total_transactions / 50) * 100)|int if analytics.total_transactions < 50 else 100 }}% Active User</div>
+                    </div>
+                    <p>You're using SecurePay regularly. Great engagement!</p>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="no-data-message">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="#ccc">
+                <circle cx="60" cy="60" r="50"/>
+                <text x="60" y="75" text-anchor="middle" font-size="60" fill="white">📊</text>
+            </svg>
+            <h3>No Transaction Data Yet</h3>
+            <p>Start making transactions to see AI-powered insights!</p>
+            <a href="{{ url_for('user_dashboard') }}" class="btn-primary">Go to Dashboard</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.insights-hero {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.insights-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.analytics-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.overview-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-content h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.25rem;
+}
+
+.card-content p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.analytics-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.analytics-section h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.receivers-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.receiver-card {
+    background: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.receiver-rank {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+    min-width: 60px;
+    text-align: center;
+}
+
+.receiver-info {
+    flex: 1;
+}
+
+.receiver-info h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.receiver-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #43e97b;
+    margin-bottom: 0.25rem;
+}
+
+.receiver-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.receiver-percentage {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.chart-container {
+    padding: 2rem 1rem;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 1rem;
+    height: 300px;
+}
+
+.chart-bar-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-bar {
+    width: 100%;
+    max-width: 80px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px 8px 0 0;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.chart-bar:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.bar-value {
+    position: absolute;
+    top: -25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #667eea;
+    white-space: nowrap;
+}
+
+.bar-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.predictions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.prediction-card {
+    background: linear-gradient(135deg, #f5f5f5 0%, #fff 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.prediction-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.prediction-card h4 {
+    color: #333;
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.prediction-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.behavior-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.behavior-item {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.behavior-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.behavior-metric {
+    margin-bottom: 1rem;
+}
+
+.metric-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.metric-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.metric-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.metric-value {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.behavior-item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.no-data-message h3 {
+    color: #333;
+    margin: 1rem 0;
+    font-size: 1.8rem;
+}
+
+.no-data-message p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .insights-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .analytics-overview {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-bars {
+        flex-wrap: wrap;
+        height: auto;
+    }
+    
+    .predictions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

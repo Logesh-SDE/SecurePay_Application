@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP - SecurePay{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="user-avatar">
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="40" fill="#5B4DFF"/>
+                    <circle cx="40" cy="30" r="12" fill="#fff"/>
+                    <path d="M 20 55 Q 40 45, 60 55" stroke="#fff" stroke-width="4" fill="none"/>
+                </svg>
+            </div>
+            
+            <h2>Enter OTP</h2>
+            <p class="subtitle">OTP sent to {{ session.verify_mobile }}</p>
+            
+            <form method="POST" action="{{ url_for('verify_otp') }}">
+                <div class="form-group">
+                    <label for="otp">Enter 6-digit OTP</label>
+                    <input type="text" id="otp" name="otp" placeholder="000000" 
+                           pattern="[0-9]{6}" maxlength="6" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Verify OTP</button>
+            </form>
+            
+            <div class="back-link">
+                <a href="{{ url_for('user_login') }}">← Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - SecurePay{% endblock %}
+
+{% block content %}
+<div class="login-page">
+    <div class="login-tabs">
+        <button class="tab-btn" onclick="switchTab('user')">User Login</button>
+        <button class="tab-btn active" onclick="switchTab('admin')">Admin Login</button>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="admin-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80">
+                    <circle cx="40" cy="40" r="40" fill="#2C3E50"/>
+                    <circle cx="40" cy="30" r="12" fill="#fff"/>
+                    <path d="M 20 55 Q 40 45, 60 55" stroke="#fff" stroke-width="4" fill="none"/>
+                    <rect x="30" y="20" width="20" height="8" fill="#FFD700"/>
+                </svg>
+            </div>
+            
+            <h2>Administrator Login</h2>
+            
+            <form method="POST" action="{{ url_for('admin_login') }}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            
+            
+            
+            <div class="back-link">
+                <a href="{{ url_for('index') }}">← Back to Homepage</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(tab) {
+    if (tab === 'user') {
+        window.location.href = "{{ url_for('user_login') }}";
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+
+{% block title %}Send Money - SecurePay{% endblock %}
+
+{% block content %}
+<div class="user-dashboard">
+    <nav class="user-navbar">
+        <div class="nav-brand">SecurePay</div>
+        <div class="nav-actions">
+            <a href="{{ url_for('user_dashboard') }}" class="btn-back">← Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+        </div>
+    </nav>
+
+    <div class="dashboard-content">
+        <div class="payment-card">
+            <div class="card-header">
+                <h2>💸 Send Money</h2>
+                <p>Transfer funds securely to any UPI ID</p>
+            </div>
+
+            <div class="balance-info">
+                <span>Available Balance</span>
+                <strong>₹{{ "%.2f"|format(user.balance) }}</strong>
+            </div>
+
+            <form method="POST" action="{{ url_for('send_money') }}" class="payment-form">
+                <div class="form-group">
+                    <label for="receiver_upi">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                            <circle cx="10" cy="7" r="4"/>
+                            <path d="M 4 18 Q 10 14, 16 18"/>
+                        </svg>
+                        Receiver's UPI ID
+                    </label>
+                    <input type="text" 
+                           id="receiver_upi" 
+                           name="receiver_upi" 
+                           placeholder="example@securepay" 
+                           required>
+                    <small>Enter the UPI ID of the person you want to send money to</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                            <text x="10" y="15" text-anchor="middle" font-size="14" font-weight="bold">₹</text>
+                        </svg>
+                        Amount
+                    </label>
+                    <div class="amount-input-wrapper">
+                        <span class="currency-symbol">₹</span>
+                        <input type="number" 
+                               id="amount" 
+                               name="amount" 
+                               placeholder="0.00" 
+                               step="0.01" 
+                               min="1"
+                               max="{{ user.balance }}"
+                               required>
+                    </div>
+                </div>
+
+                <div class="quick-amounts">
+                    <p>Quick Select:</p>
+                    <div class="amount-buttons">
+                        <button type="button" class="amount-btn" onclick="setAmount(100)">₹100</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(500)">₹500</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(1000)">₹1000</button>
+                        <button type="button" class="amount-btn" onclick="setAmount(2000)">₹2000</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" style="vertical-align: middle; margin-right: 5px;">
+                            <rect x="3" y="4" width="14" height="12" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="6" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5"/>
+                            <line x1="6" y1="11" x2="11" y2="11" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        Message (Optional)
+                    </label>
+                    <input type="text" 
+                           id="description" 
+                           name="description" 
+                           placeholder="What's this payment for?">
+                </div>
+
+                <div class="security-info">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#4CAF50">
+                        <path d="M12 2L4 6v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V6l-8-4z"/>
+                        <path d="M9 12l2 2 4-4" stroke="white" stroke-width="2" fill="none"/>
+                    </svg>
+                    <div>
+                        <strong>Secure Transfer</strong>
+                        <p>Your transaction is protected with bank-level encryption</p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-payment">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white" style="vertical-align: middle; margin-right: 8px;">
+                        <path d="M2 18l16-8L2 2v6l11 2-11 2z"/>
+                    </svg>
+                    Send Money
+                </button>
+            </form>
+        </div>
+
+        <div class="recent-contacts">
+            <h3>💼 My UPI ID</h3>
+            <div class="upi-display">
+                <code>{{ user.upi_id }}</code>
+                <button class="copy-btn" onclick="copyUPI('{{ user.upi_id }}')">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="2" y="2" width="10" height="10" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="4" y="4" width="10" height="10" rx="1"/>
+                    </svg>
+                    Copy
+                </button>
+            </div>
+            <small>Share this with others to receive money</small>
+        </div>
+    </div>
+</div>
+
+<style>
+.payment-card {
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h2 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.card-header p {
+    color: #666;
+    font-size: 14px;
+}
+
+.balance-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    color: white;
+}
+
+.balance-info span {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.balance-info strong {
+    font-size: 24px;
+}
+
+.payment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: #999;
+    font-size: 12px;
+}
+
+.amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.currency-symbol {
+    position: absolute;
+    left: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.amount-input-wrapper input {
+    padding-left: 45px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.quick-amounts p {
+    color: #666;
+    margin-bottom: 0.75rem;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.amount-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+.amount-btn {
+    padding: 10px;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.amount-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.security-info {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #e8f5e9;
+    border-radius: 10px;
+    border-left: 4px solid #4CAF50;
+}
+
+.security-info strong {
+    display: block;
+    color: #2e7d32;
+    margin-bottom: 0.25rem;
+}
+
+.security-info p {
+    color: #4CAF50;
+    font-size: 13px;
+    margin: 0;
+}
+
+.btn-submit-payment {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-submit-payment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.recent-contacts {
+    max-width: 600px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.recent-contacts h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.upi-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f5f5f5;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.upi-display code {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.copy-btn {
+    padding: 8px 16px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.copy-btn:hover {
+    background: #5640d8;
+}
+
+.recent-contacts small {
+    color: #666;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .payment-card, .recent-contacts {
+        padding: 2rem 1.5rem;
+    }
+    
+    .amount-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+
+<script>
+function setAmount(value) {
+    const maxBalance = {{ user.balance }};
+    if (value <= maxBalance) {
+        document.getElementById('amount').value = value;
+    } else {
+        document.getElementById('amount').value = maxBalance;
+        alert('Amount cannot exceed your available balance');
+    }
+}
+
+function copyUPI(upiId) {
+    navigator.clipboard.writeText(upiId).then(() => {
+        const btn = event.target.closest('.copy-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✓ Copied!';
+        btn.style.background = '#4CAF50';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '#667eea';
+        }, 2000);
+    });
+}
+
+// Form validation
+document.querySelector('.payment-form').addEventListener('submit', function(e) {
+    const amount = parseFloat(document.getElementById('amount').value);
+    const maxBalance = {{ user.balance }};
+    
+    if (amount > maxBalance) {
+        e.preventDefault();
+        alert('Insufficient balance! Your available balance is ₹' + maxBalance.toFixed(2));
+    }
+});
+</script>
+{% endblock %}
